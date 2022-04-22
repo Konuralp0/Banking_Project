@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class AccountUser {
     private String name = null;
     private String surname = null;
@@ -17,12 +19,11 @@ public class AccountUser {
         this.password = password;
         this.balance = balance;
         id = idStatic;
-        String cutterStr = "";
+        String cutterStr;
         String cutterStrHead = "";
         int valueOfCutter= 0;
         for(int i = 0; i<idStatic.length(); i++){
             if(idStatic.charAt(i) == 0){
-                continue;
             }else{
                 cutterStrHead = idStatic.substring(0,i);
                 cutterStr = idStatic.substring(i);
@@ -32,11 +33,66 @@ public class AccountUser {
         }
         int plusValueCutter = valueOfCutter+1;
         String plusValStr = String.valueOf(plusValueCutter);
-        String newValId = cutterStrHead.concat(plusValStr);
-        idStatic = newValId;
+        idStatic = cutterStrHead.concat(plusValStr);
+
 
 
     }
+
+    public void withdraw() {
+        Scanner scanner = new Scanner(System.in);
+        boolean bError = true;
+        do {
+            try {
+                boolean isBig = false;
+                System.out.print("Please input the amount you want to withdraw: ");
+                while(!isBig){
+
+
+                    long bal = Long.parseLong(scanner.nextLine());
+                    if(bal > balance ){
+                        System.out.println("******ERROR******\n" +
+                                "Your balance is lower than what you are trying to withdraw. Please input a valid amount !");
+                    }else if (bal<0 || bal == 0 ){
+                        System.out.println("******ERROR******\n" +
+                                "Please input a valid amount !");
+                    }else{
+                        balance = balance - bal;
+                        System.out.println("Your new balance is: " + balance);
+                        isBig = true;
+
+                    }
+
+                bError = false;
+                }
+            }catch (Exception e){
+                System.out.println("Please input only numerical values [0-9]");
+            }
+        }while (bError);
+
+    }
+
+    public void deposit(){
+        Scanner scanner = new Scanner(System.in);
+        boolean bError = true;
+        do {
+            try {
+                System.out.print("Please input the amount you want to deposit: ");
+                long amountDep = Long.parseLong(scanner.nextLine());
+                balance += amountDep;
+                System.out.println("Your new balance is: " + balance);
+                bError = false;
+
+            }catch (Exception e){
+                System.out.println("Please input only numerical values [0-9]");
+
+
+            }
+        }while(bError);
+
+
+    }
+
 
 
 
@@ -71,19 +127,20 @@ public class AccountUser {
 
     public String getBalance() {
         return balance + "€";
+
     }
 
     public void setBalance(long balance) {
         this.balance = balance;
     }
 
-    public String toString() {
-        return "AccountUser{" +
-                "name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", password='" + password + '\'' +
-                ", id=" + id +
-                ", balance=" + balance +
-                '}';
+    public void showInfo() {
+        System.out.println("Your personal banking account information: " +
+                "Name='" + name + '\'' +
+                ", Surname='" + surname + '\'' +
+                ", Password='" + password + '\'' +
+                ", Id=" + id +
+                ", Balance=" + balance +
+                "€}");
     }
 }
