@@ -1,5 +1,5 @@
 
-import java.util.InputMismatchException;
+
 
 import java.util.Scanner;
 
@@ -7,7 +7,7 @@ import static java.lang.Thread.sleep;
 
 public class BankingMethods  {
 
-    public static void execution() throws InterruptedException{ // log1: banka interface i icin dynamik olan metod kodlanicak (para cekme para yatirma vb.)
+    public static void execution() throws InterruptedException{
         System.out.println("\n****** Welcome to Online Banking System!! Please follow the instructions to create an online banking account ******\n");
         sleep(1900);
         AccountUser a = accountCreation();
@@ -18,20 +18,141 @@ public class BankingMethods  {
     }
 
     private static void operations(AccountUser a) throws InterruptedException {
-        spaces(100);
+        spaces(30);
+        System.out.println("--------------------------------------------- Welcome to your dashboard " + a.getName() +" " + a.getSurname()+"! ---------------------------------------------");
+        boolean looping = true;
+        boolean defaultLooping = true;
+        do {                                                                                                    //NOT: --------> Her seyin dinamik bir sekilde olmasi icin yapilacak butun islemler bir dongunun icinde olmasi lazim  ve her hatada bu dongu exception vererek bozulmamasi lazim. Bu exceptionlari AccountUser classinda ve asagidaki metodlarda handling yaotigim icin sikinti olmadi
+                                                                                                                // Birden fazla yapilabilcek operasyon olasiligi oldugu icin switch case kullanimi en uygundu
+            spaces(2);
+            sleep(1000);                                                                                   // Birden fazla boolean degerleri kullanmamin nedeni donguleri daha iyi kontrol edebilmek icindi
+            System.out.println("\nPlease select from the operations below what you want to do!");
+            System.out.println("""
+                    -To withdraw money press 1 !
+                    -To deposit money press 2 !
+                    -To view your account details press 3 !
+                    -To modify your account password press 4 !
+                    -To log out from the system press 5 !""");
+
+            Scanner scanner = new Scanner(System.in);
+            String choice = scanner.nextLine();
+
+            switch (choice){
+                case "1":
+                    a.withdraw();
+                    break;
+                case "2":
+                    a.deposit();
+                    break;
+                case "3":
+                    System.out.println("To view your account details you have to type in your password!!");
+                    boolean checkPass = false;
+                    int counterForPass = 0;
+                    do {
+                        Scanner scanner1 = new Scanner(System.in);
+                        String contrPass = scanner1.nextLine();
+                        if (contrPass.equals(a.getPassword())){
+                            checkPass = true;
+                            a.showInfo();
+                            sleep(1000);
+                            break;
+                        }else{
+                            counterForPass++;
+                            if(counterForPass == 3){
+                                System.out.println("You have exceeded the amount of tries!! Your account has been locked. Please contact your local bank branch!! ");
+                                System.exit(0);
+
+
+                            }
+                            System.out.print("Invalid Password!! Please try again: ");
 
 
 
-        a.showInfo();
-        a.withdraw();
-        a.deposit();
+                        }
+                    }while (!checkPass);
+
+
+
+                    break;
+                case "4":
+                    System.out.println("Please type in your current password!!");
+                    boolean checkPass2 = false;
+                    int counterForPass2 = 0;
+                    do {
+                        Scanner scanner1 = new Scanner(System.in);
+                        String contrPass = scanner1.nextLine();
+                        if (contrPass.equals(a.getPassword())){
+                            checkPass2 = true;
+                            System.out.println("Redirecting you to password creation page....");
+                            spaces(15);
+                            sleep(1000);
+                            a.setPassword(passCreation());
+
+                            sleep(1000);
+                            break;
+                        }else{
+                            counterForPass2++;
+                            if(counterForPass2 == 3){
+                                System.out.println("You have exceeded the amount of tries!! Your account has been locked. Please contact your local bank branch!! ");
+                                System.exit(0);
+
+
+                            }
+                            System.out.print("Invalid Password!! Please try again: ");
+
+
+
+                        }
+                    }while (!checkPass2);
+
+                    break;
+
+                case "5":
+                    spaces(20);
+                    System.out.println("Loging out....");
+                    System.exit(0);
+                default:
+                    System.out.println("*****ERROR*****\n"+"That is not a valid operation!!");
+                    defaultLooping = false;
+            }
+
+
+
+            if(defaultLooping){
+            sleep(1000);
+            boolean checkCon = false;
+            System.out.println("Press 0 if you want to continue from your dashboard or 1 to exit from the system");
+            while(!checkCon){
+            Scanner scanner1 = new Scanner(System.in);
+            String choice1 = scanner1.nextLine();
+            if ("1".equals(choice1)) {
+                looping = false;
+                checkCon = true;
+            }else if ("0".equals(choice1)){
+                System.out.println("You are being redirected....");
+                sleep(1500);
+                spaces(20);
+                checkCon = true;
+                System.out.println("--------------------------------------------- Welcome back to your dashboard " + a.getName() +" " + a.getSurname()+"! ---------------------------------------------");
+            }else {
+                System.out.println("Please input a valid number!!");
+            }
+            }}
+
+        }while (looping);
+
+        spaces(10);
+        System.out.println("Loging out....");
+        System.exit(0);
+
+
 
     }
 
 
 
 
-    private static AccountUser accountCreation() throws InterruptedException{        //NOT: Burda asagida yazdigim metodlarin returnlerini degisklenlere atayip yeni bir AccountUser instanci olusuyor ve bu sayede yukardaki operations metodlarinda bu kullanicinin bilgilerini kullanima sunabilirim
+    private static AccountUser accountCreation() throws InterruptedException{       //NOT: Burda asagida yazdigim metodlarin returnlerini degisklenlere atayip yeni bir AccountUser instanci olusuyor ve bu sayede yukardaki operations metodlarinda bu kullanicinin bilgilerini kullanima sunabilirim
                                                                                     // Metod InterruptedExceptionlari atiyor cunki isin icine biraz gercekcilik katsin diye internette dolum suresini canladiran sleep metodunu kullandim
         String name = nameCreation();
         String surname = surnameCreation();
@@ -55,8 +176,8 @@ public class BankingMethods  {
     }
 
     private static String passCreation() throws InterruptedException {                //NOT: Sifre olusumunda kullandigim kod blogu bize ilk haftalarda verilen sifre odevindeki kod bloguyla hemen hemen ayni.
-        Scanner scanner = new Scanner(System.in);                                      // Tek farki do while loopun icinde cunku gereksinimlere uygun bir sifre olusmadiysa tekrar girilmesi istenecek.
-        boolean passwordOk = false;                                                    // Metod InterruptedExceptionlari atiyor cunki isin icine biraz gercekcilik katsin diye internette dolum suresini canladiran sleep metodunu kullandim
+        Scanner scanner = new Scanner(System.in);                                     // Tek farki do while loopun icinde cunku gereksinimlere uygun bir sifre olusmadiysa tekrar girilmesi istenecek.
+        boolean passwordOk = false;                                                   // Metod InterruptedExceptionlari atiyor cunki isin icine biraz gercekcilik katsin diye internette dolum suresini canladiran sleep metodunu kullandim
 
         String password;
         System.out.print("Please create your password: ");
@@ -97,9 +218,10 @@ public class BankingMethods  {
         Scanner scanner = new Scanner(System.in);                                                  // Eger rakam disinda bir karakter girilse program direk exception kapanmayip consola uyari verip kullanicidan tekrar girilmesini istiyor
         boolean bError = true;
         double balance = 0;
+        System.out.print("\nPlease input the balance you want to start with(€): ");
         do {
             try {
-                System.out.print("\nPlease input the balance you want to start with: ");
+
                 balance = Double.parseDouble(scanner.nextLine());
                 bError = false;
 
@@ -115,7 +237,7 @@ public class BankingMethods  {
 
     private static String nameCreation(){                           //NOT: Soyadi olusumu icin de ayri bir metod yazdim ki genele bakilinca okunakli bir kod olsun.
         Scanner scanner = new Scanner(System.in);                   //  Burda onemli olan kullanicinin harflerden baska bir karakter girmemesi ve eger kucuk buyuk harf dikkat etmeksizin soyadini yazarsa sadece ilk harfi buyuk harf yapip digerlerini kucultup soyadina atamak
-        String name;                                                 // Bunun icinde do while dongusu en uygunu. Harf kontrolu yapmak icin for loop kullandim ve bir sayc degiskenim var.
+        String name;                                                // Bunun icinde do while dongusu en uygunu. Harf kontrolu yapmak icin for loop kullandim ve bir sayc degiskenim var.
         int counter;                                                // Eger girilen harfsa sayac arttiralacak degilse azaltilacak ve en sonda toplam karakter sayisi sayac ile ayni degilse tekrar girilmesi istenecek
 
 

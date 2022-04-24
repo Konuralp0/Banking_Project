@@ -1,16 +1,12 @@
 import java.util.Scanner;
 
 public class AccountUser {
-    private String name = null;
-    private String surname = null;
-    private String password = null;
+    private final String name;
+    private final String surname;
+    private String password;
     private static String idStatic = "00001";
-    private String id;
+    private final String id;
     private double balance;
-
-    public AccountUser() {
-
-    }
 
 
     public AccountUser(String name, String surname, String password, double balance) {
@@ -41,10 +37,11 @@ public class AccountUser {
 
     public void withdraw() {
         Scanner scanner = new Scanner(System.in);
-        boolean bError = true;
+        boolean bError = false;
+        boolean isBig = false;
         do {                                                                  // NOT: Para cekiminde normal bakiyeden daha buyuk, 0 veya negatif bir sayi giriminde uyari vermesi gerek ve tekrar input istenmesi gerekecek bunun icin do while loop u ideal
-            try {                                                              // Bir baska sikinti girilen inputun rakam disinda bir karakter olmasi programin Input exception vermemesi icinse try catch gerekli
-                boolean isBig = false;                                          // Bunun icin scannerden gelen degeri String olarak alip double a parselemek gerekli eger girilen inputun icinde rakamdan baska bir karakter varsa  Exception atacak ve uyari verecek, atmassa boolean degere false atanip while loopdan cikilcak
+            try {                                                             // Bir baska sikinti girilen inputun rakam disinda bir karakter olmasi programin Input exception vermemesi icinse try catch gerekli
+                                                                            // Bunun icin scannerden gelen degeri String olarak alip double a parselemek gerekli eger girilen inputun icinde rakamdan baska bir karakter varsa  Exception atacak ve uyari verecek, atmassa boolean degere false atanip while loopdan cikilcak
                 System.out.print("Please input the amount you want to withdraw: ");
                 while(!isBig){
 
@@ -53,22 +50,25 @@ public class AccountUser {
                     if(bal > balance ){
                         System.out.println("******ERROR******\n" +
                                 "Your balance is lower than what you are trying to withdraw. Please input a valid amount !");
+
                     }else if (bal<0 || bal == 0 ){
                         System.out.println("******ERROR******\n" +
                                 "Please input a valid amount !");
+
                     }else{
                         balance = balance - bal;
                         System.out.println("Your new balance is: " + balance+"€");
                         isBig = true;
+                        bError = true;
 
                     }
 
-                bError = false;
+
                 }
             }catch (Exception e){
                 System.out.println("Please input only numerical values [0-9]");
             }
-        }while (bError);
+        }while (!bError);
 
     }
 
@@ -101,16 +101,8 @@ public class AccountUser {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getSurname() {
         return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     public String getPassword() {
@@ -121,26 +113,13 @@ public class AccountUser {
         this.password = password;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getBalance() {
-        return balance + "€";
-
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
-
     public void showInfo() {
-        System.out.println("Your personal banking account information: " +
-                "Name='" + name + '\'' +
-                ", Surname='" + surname + '\'' +
-                ", Password='" + password + '\'' +
-                ", Id=" + id +
-                ", Balance=" + balance +
-                "€}");
+        System.out.println("Your personal banking account details: \n" +
+                "Name = " + name + "\n" +
+                "Surname = " + surname + "\n" +
+                "Password = " + password + "\n" +
+                "Id = " + id +"\n"+
+                "Balance= " + balance +
+                "€");
     }
 }
