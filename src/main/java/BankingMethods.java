@@ -8,17 +8,20 @@ import static java.lang.Thread.sleep;
 public class BankingMethods  {
 
     public static void execution() throws InterruptedException{ // log1: banka interface i icin dynamik olan metod kodlanicak (para cekme para yatirma vb.)
-        System.out.println("****** Welcome to Online Banking System!! Please follow the instructions to create an online banking account ******\n");
+        System.out.println("\n****** Welcome to Online Banking System!! Please follow the instructions to create an online banking account ******\n");
         sleep(1900);
         AccountUser a = accountCreation();
         sleep(1500);
-        spaces(50);
         operations(a);
 
 
     }
 
     private static void operations(AccountUser a) throws InterruptedException {
+        spaces(100);
+
+
+
         a.showInfo();
         a.withdraw();
         a.deposit();
@@ -28,23 +31,18 @@ public class BankingMethods  {
 
 
 
-    private static AccountUser accountCreation() throws InterruptedException{
-
+    private static AccountUser accountCreation() throws InterruptedException{        //NOT: Burda asagida yazdigim metodlarin returnlerini degisklenlere atayip yeni bir AccountUser instanci olusuyor ve bu sayede yukardaki operations metodlarinda bu kullanicinin bilgilerini kullanima sunabilirim
+                                                                                    // Metod InterruptedExceptionlari atiyor cunki isin icine biraz gercekcilik katsin diye internette dolum suresini canladiran sleep metodunu kullandim
         String name = nameCreation();
         String surname = surnameCreation();
         String password = passCreation();
 
-        long balance;
-        try {
-             balance = balCreation();
-        }catch (InputMismatchException e){
-            System.out.println("Please input only numerical values [0-9]");
-             balance = balCreation();
-
-        }
-        System.out.println("Creating your account. This can take up to 30 seconds !!");
+        double balance = balCreation();
+        System.out.println("\nCreating your account. This can take up to 30 seconds !!");
         sleep(1500);
-        System.out.println("Your account has been successfully created!");
+        System.out.println("Your account has been successfully created !\n");
+        sleep(1000);
+        System.out.println("\nYou are now being redirected to your dashboard.");
 
         return new AccountUser(name,surname, password,balance);
 
@@ -56,35 +54,36 @@ public class BankingMethods  {
 
     }
 
-    private static String passCreation() throws InterruptedException {
-        Scanner scanner = new Scanner(System.in);
-        boolean passwordOk = false;
+    private static String passCreation() throws InterruptedException {                //NOT: Sifre olusumunda kullandigim kod blogu bize ilk haftalarda verilen sifre odevindeki kod bloguyla hemen hemen ayni.
+        Scanner scanner = new Scanner(System.in);                                      // Tek farki do while loopun icinde cunku gereksinimlere uygun bir sifre olusmadiysa tekrar girilmesi istenecek.
+        boolean passwordOk = false;                                                    // Metod InterruptedExceptionlari atiyor cunki isin icine biraz gercekcilik katsin diye internette dolum suresini canladiran sleep metodunu kullandim
 
         String password;
+        System.out.print("Please create your password: ");
         do {
-            System.out.print("Please create your password:  ");
+
             password = scanner.nextLine();
             char firstChar = password.charAt(0);
             int lenPassword = password.length();
             char lastChar = password.charAt(lenPassword - 1);
             boolean isSpace = password.contains(" ");
-
+            System.out.println("Validating your password. Please be patient!");
             if (((int) firstChar >= 65 && (int) firstChar <= 90) && ((int) lastChar >= 97 && (int) lastChar <= 122) && lenPassword >= 8 && !isSpace) {
-                System.out.println("Validating your password. Please be patient!");
                 sleep(1500);
                 System.out.println("Your password has been successfully created");
                 passwordOk = true;
 
 
             } else {
-                System.out.println("Validating your password. Please be patient!");
+
                 sleep(1500);
+                System.out.println();
                 System.out.println("""
                         Your password does not provide the requirements!!
                         - Please ensure that your password starts with a capital letter
                         - ends with a small case letter
                         - does not contain space
-                        - should contain at leat 8 characters""");
+                        - should contain at leat 8 characters""" + "\n"+"Please create a new password!" );
 
             }
 
@@ -94,14 +93,14 @@ public class BankingMethods  {
         return password;
     }
 
-    private static long balCreation(){
-        Scanner scanner = new Scanner(System.in);
+    private static double balCreation(){                                                           //Not: Bakiye olusumu icin de ayri bir metod yazdim. Bu metodda AccountUser Classindaki withdraw ve depositle ayni mantikla ilerliyor
+        Scanner scanner = new Scanner(System.in);                                                  // Eger rakam disinda bir karakter girilse program direk exception kapanmayip consola uyari verip kullanicidan tekrar girilmesini istiyor
         boolean bError = true;
-        long balance = 0;
+        double balance = 0;
         do {
             try {
-                System.out.print("Please input the balance you want to start with: ");
-                balance = Long.parseLong(scanner.nextLine());
+                System.out.print("\nPlease input the balance you want to start with: ");
+                balance = Double.parseDouble(scanner.nextLine());
                 bError = false;
 
             }catch (Exception e){
@@ -114,10 +113,10 @@ public class BankingMethods  {
 
 
 
-    private static String nameCreation(){
-        Scanner scanner = new Scanner(System.in);
-        String name;
-        int counter;
+    private static String nameCreation(){                           //NOT: Soyadi olusumu icin de ayri bir metod yazdim ki genele bakilinca okunakli bir kod olsun.
+        Scanner scanner = new Scanner(System.in);                   //  Burda onemli olan kullanicinin harflerden baska bir karakter girmemesi ve eger kucuk buyuk harf dikkat etmeksizin soyadini yazarsa sadece ilk harfi buyuk harf yapip digerlerini kucultup soyadina atamak
+        String name;                                                 // Bunun icinde do while dongusu en uygunu. Harf kontrolu yapmak icin for loop kullandim ve bir sayc degiskenim var.
+        int counter;                                                // Eger girilen harfsa sayac arttiralacak degilse azaltilacak ve en sonda toplam karakter sayisi sayac ile ayni degilse tekrar girilmesi istenecek
 
 
         do {
@@ -143,17 +142,17 @@ public class BankingMethods  {
         }while(counter < name.length());
 
         String name2 = name.toLowerCase();
-        return name.substring(0,1).toUpperCase().concat(name2);
+        return name.substring(0,1).toUpperCase().concat(name2.substring(1));
 
     }
 
 
 
 
-    private static String surnameCreation(){
-        Scanner scanner = new Scanner(System.in);
-        String surname;
-        int counter;
+    private static String surnameCreation(){                            //NOT: Soyadi olusumu icin de ayri bir metod yazdim ki genele bakilinca okunakli bir kod olsun.
+        Scanner scanner = new Scanner(System.in);                       //  Burda onemli olan kullanicinin harflerden baska bir karakter girmemesi ve eger kucuk buyuk harf dikkat etmeksizin soyadini yazarsa sadece ilk harfi buyuk harf yapip digerlerini kucultup soyadina atamak
+        String surname;                                                 // Bunun icinde do while dongusu en uygunu. Harf kontrolu yapmak icin for loop kullandim ve bir sayc degiskenim var.
+        int counter;                                                    // Eger girilen harfsa sayac arttiralacak degilse azaltilacak ve en sonda toplam karakter sayisi sayac ile ayni degilse tekrar girilmesi istenecek
 
 
         do {
@@ -177,11 +176,11 @@ public class BankingMethods  {
         }while(counter < surname.length());
 
         String surname2 = surname.toLowerCase();
-        return surname.substring(0,1).toUpperCase().concat(surname2);
+        return surname.substring(0,1).toUpperCase().concat(surname2.substring(1));
 
     }
 
-    private static void spaces(int a){
+    private static void spaces(int a ){                                      // NOT: Terminalde olan cls komutu consolda olmadigi icin onun yerine alan bosluklar adli metod. Bu metodla istenilen kadar bosluk atilip sanki consol temizlenmis goruntusu veriliyor
         for(int i = a; i>=0;i--){
             System.out.print("\n");
         }
