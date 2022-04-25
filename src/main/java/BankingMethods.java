@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 import static java.lang.Thread.sleep;
 
-public class BankingMethods  {
+public abstract class BankingMethods  {
 
     public static void execution() throws InterruptedException{
         System.out.println("\n****** Welcome to Online Banking System!! Please follow the instructions to create an online banking account ******\n");
@@ -39,9 +39,15 @@ public class BankingMethods  {
 
             switch (choice){
                 case "1":
+                    System.out.println("Redirecting you to withdraw page....");
+                    sleep(1500);
+                    spaces(15);
                     a.withdraw();
                     break;
                 case "2":
+                    System.out.println("Redirecting you to deposit page....");
+                    sleep(1500);
+                    spaces(15);
                     a.deposit();
                     break;
                 case "3":
@@ -53,6 +59,9 @@ public class BankingMethods  {
                         String contrPass = scanner1.nextLine();
                         if (contrPass.equals(a.getPassword())){
                             checkPass = true;
+                            System.out.println("Redirecting you to account details page....");
+                            sleep(1500);
+                            spaces(15);
                             a.showInfo();
                             sleep(1000);
                             break;
@@ -85,7 +94,7 @@ public class BankingMethods  {
                             checkPass2 = true;
                             System.out.println("Redirecting you to password creation page....");
                             spaces(15);
-                            sleep(1000);
+                            sleep(1500);
                             a.setPassword(passCreation());
 
                             sleep(1000);
